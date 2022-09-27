@@ -1,0 +1,87 @@
+html {
+    background-color: #f0f0f0;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+body {
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 1.6rem;
+}
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+*:focus {
+    outline: none;
+}
+::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+
+    &-track, &-corner {
+        background: hsl(0, 0%, 15%);
+    }
+    &-thumb {
+        background: hsl(0, 0%, 53%);
+        border-radius: 9px;
+        border: 3px solid hsl(0, 0%, 5%);
+
+        &:hover {
+            background: hsl(0, 0%, 33%); 
+        }
+    }
+}
+
+// ---------- Quill Text Editor ----------
+.quill {
+    .ql-toolbar.ql-snow {
+        display: flex;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background-color: #f0f0f0;
+        border: none;
+        box-shadow: 0 0 5px 0 hsla(0, 0%, 0%, .5);
+    }
+    .ql-container.ql-snow {
+        border: none;
+        display: flex;
+        justify-content: center;
+    
+        .ql-editor {
+            width: 8.5in;
+            min-height: 11in;
+            padding: 1in;
+            margin: 1rem;
+            box-shadow: 0 0 5px 0 hsla(0, 0%, 0%, .5);
+            background-color: #fff;
+        }
+    }
+}
+
+@page {
+    margin: 1in;
+}
+@media only print {
+    body {
+        background: none;
+    }
+    .quill {
+        .ql-toolbar.ql-snow {
+            display: none;
+        }
+        .ql-container.ql-snow .ql-editor {
+            width: 6.5in;
+            height: 9in;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+            align-self: flex-start;
+        }
+    }
+}

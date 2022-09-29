@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+import { io } from 'socket.io-client'
 
 const TOOLBAR_OPTIONS = [
     [{header: [1, 2, 3, 4, 5, 6, false]}],
@@ -15,15 +16,52 @@ const TOOLBAR_OPTIONS = [
 ]
 
 export default function TextEditor() {
+    const [socket, setSocket] = useState(null)
+    const [quill, setQuill] = useState(null)
+
     const quillRef = useRef()
 
     useEffect(() => {
+        const socket_ = io('http://localhost:3001')
+        setSocket(socket_)
+        
+        const quillCurrent = quillRef.current
         const editor = document.createElement('div')
-        quillRef.current.appendChild(editor)
-        new Quill(editor, {theme: 'snow', modules: {toolbar: TOOLBAR_OPTIONS}})
+        
+        quillCurrent.appendChild(editor)
+        const quill_ = new Quill(editor, {theme: 'snow', modules: {toolbar: TOOLBAR_OPTIONS}})
+        setQuill(quill_)
 
-        return () => quillRef.current.innerHTML = null
+        return () => {
+            socket_.disconnect()
+            quillCurrent.innerHTML = null
+        }
     }, [])
+
+    useEffect(() => {
+        if (socket === null || quill === null) return
+
+        const textChange = (delta, oldDelta, source) => {
+            if (source !== 'user') return
+            socket.emit('send-changes', delta)
+        }
+
+        quill.on('text-change', textChange)
+
+        return () => quill.off('text-change', textChange)
+    }, [socket, quill])
+
+    useEffect(() => {
+        if (socket === null || quill === null) return
+        
+        const receiveChanges = delta => {
+            quill.updateContents(delta)
+        }
+
+        socket.on('receive-changes', receiveChanges)
+
+        return () => socket.off('receive-changes', receiveChanges)
+    }, [socket, quill])
 
     return (
         <div className='quill' ref={quillRef}></div>

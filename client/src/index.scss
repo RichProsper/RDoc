@@ -37,6 +37,21 @@ body {
 }
 
 // ---------- Quill Text Editor ----------
+.save-btn {
+    background: none;
+    border: none;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: .5em 0;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color .2s;
+
+    &:hover {
+        color: hsl(210, 100%, 40%);
+    }
+}
 .quill {
     .ql-toolbar.ql-snow {
         display: flex;
@@ -70,6 +85,9 @@ body {
 @media only print {
     body {
         background: none;
+    }
+    .save-btn {
+        display: none;
     }
     .quill {
         .ql-toolbar.ql-snow {

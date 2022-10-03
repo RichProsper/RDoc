@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Quill from 'quill'
+import { generateWord } from 'quill-to-word'
+import { saveAs } from 'file-saver'
 import 'quill/dist/quill.snow.css'
 import { io } from 'socket.io-client'
 import { useParams } from 'react-router-dom'
@@ -20,8 +22,8 @@ export default function TextEditor() {
     const [socket, setSocket] = useState(null)
     const [quill, setQuill] = useState(null)
     const { docId } = useParams()
-
     const quillRef = useRef()
+    const saveRef = useRef()
 
     useEffect(() => {
         const socket_ = io('http://localhost:3001')
@@ -79,7 +81,24 @@ export default function TextEditor() {
         return () => socket.off('receive-changes', receiveChanges)
     }, [socket, quill])
 
+    const saveAsWordDoc = async () => {
+        const delta = quill.getContents()
+        const docAsBlob = await generateWord(delta, {exportAs: 'blob'})
+        saveAs(docAsBlob, `WordDoc_${Date.now()}.docx`)
+    }
+
     return (
-        <div className='quill' ref={quillRef}></div>
+        <>
+            <button
+                type='button'
+                className='save-btn'
+                ref={saveRef}
+                onClick={saveAsWordDoc}
+                title='Saves file as a Word Document (.docx)'
+            >
+                Save as Word Document
+            </button>
+            <div className='quill' ref={quillRef}></div>
+        </>
     )
 }

@@ -1,2 +1,2 @@
-# RDocs
-RDocs is a Google Docs mini clone
+# RDoc
+RDoc allows users to create documents online then save them as Word documents.
